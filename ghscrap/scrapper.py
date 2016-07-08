@@ -55,7 +55,7 @@ def _search_page_users(soup,params):
 def main():
     location = str(sys.argv[1])
     filename = str(sys.argv[2])
-    
+
     if len(sys.argv) > 3:
         max_users = int(sys.argv[3])
         users = search_location(location, max_users=max_users)
@@ -68,6 +68,6 @@ def main():
 
     f.close()
 
-    
+
 if __name__ == '__main__':
     main()
