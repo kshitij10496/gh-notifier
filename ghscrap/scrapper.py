@@ -67,8 +67,34 @@ def user_search_filter(filterkey):
     return search_params
 
 
-def search_location(location, max_users=50, params={}):
-    """Return a list of handles of the users at a particular location."""
+def search_location(location, keyword=None, max_users=50, params={}):
+    """Location based search.
+
+    Parameters
+    ==========
+
+    location : String
+        The name of the concerned location.
+
+    keyword : String
+        The filter for search a criteria.
+
+    max_users : int
+        The maximum number of users of interest.
+        Using a number larger than 100 can lead to loss of results due to
+        making "Too Many Requests" [HTTP Status Code: 429].
+
+    params : dict
+        Any specified parameters.
+
+    Returns
+    =======
+
+    list
+        A list of handles of the users at a particular location based on the
+        specified criterias(if any).
+
+    """
     params['q'] = 'location:' + location
     if keyword is not None:
         new_params = user_search_filter(keyword)
