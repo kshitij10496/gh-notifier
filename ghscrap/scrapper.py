@@ -70,6 +70,10 @@ def user_search_filter(filterkey):
 def search_location(location, max_users=50, params={}):
     """Return a list of handles of the users at a particular location."""
     params['q'] = 'location:' + location
+    if keyword is not None:
+        new_params = user_search_filter(keyword)
+        params.update(new_params)
+
     soup = kitchen(params)
     return _search_location(soup, max_users, params)
 
