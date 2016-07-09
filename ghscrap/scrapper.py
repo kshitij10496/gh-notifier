@@ -14,6 +14,59 @@ def kitchen(params):
     return soup
 
 
+def user_search_filter(filterkey):
+    """Filter for user search pages.
+
+    Parameters
+    ==========
+
+    filterkey : String
+        The keyword to filter the results out based on some criteria.
+
+        Currently, the following criterias are supported:
+        1. Number of followers := 'Most followers' or 'Fewest followers'
+        2. Number of repositories := 'Most repositories' or 'Fewest repositories'
+        3. Relative date of joining := 'Most recently joined' or 'Least recently joined'
+        If nothing is passed, the result of 'Best Match' is returned.
+
+    Returns
+    =======
+
+    dict
+        A dictionary of search parameters based on `filterkey`.
+
+    """
+    user_search_parameters = ('follow', 'repo', 'join')
+    measure_table = {'desc': ('most','high', 'large'), 'asc': ('least', 'less', 'few')}
+    timeline_table = {'desc': ('recent', 'new'), 'asc': ('last', 'old')}
+
+    search_params = {}
+
+    if any(parameter in filterkey for parameter in user_search_parameters):
+        if 'join' in filterkey:
+            search_params['s'] = 'joined'
+            table = timeline_table
+
+        else:
+            table = measure_table
+            if 'follow' in filterkey:
+                search_params['s'] = 'followers'
+            else:
+                search_params['s'] = 'repositories'
+
+        if any(word in filterkey for word in table['asc']):
+            search_params['o'] = 'asc'
+
+        else:
+            search_params['o'] = 'desc' # the default behaviour returns "Most followers".
+
+    else:
+        raise ValueError("Enter a valid filterkey. Read the documentation "
+            "to know about the supported search parameters.")
+
+    return search_params
+
+
 def search_location(location, max_users=50, params={}):
     """Return a list of handles of the users at a particular location."""
     params['q'] = 'location:' + location
