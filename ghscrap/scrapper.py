@@ -1,6 +1,6 @@
+from __future__ import division
 import sys
 from math import ceil
-
 import requests
 from bs4 import BeautifulSoup
 
@@ -26,7 +26,7 @@ def _search_location(soup, max_users, params):
     number_of_users = int(soup.find_all('h3')[1].text.split()[2])
     max_pages = ceil(max_users / 10) + 1
     search_pages = ceil(number_of_users / 10) + 1
-    number_of_pages = min(max_pages, search_pages)
+    number_of_pages = int(min(max_pages, search_pages))
 
     users = []
     for i in range(1, number_of_pages):
