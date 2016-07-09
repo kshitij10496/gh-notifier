@@ -1,4 +1,6 @@
 # gh-scrapper
+
+[![Join the chat at https://gitter.im/kshitij10496/gh-scrapper](https://badges.gitter.im/kshitij10496/gh-scrapper.svg)](https://gitter.im/kshitij10496/gh-scrapper?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 GitHub Scrapper written in Python
 
 This library aims to provide an extensive mechanism for scrapping resources from GitHub.  
