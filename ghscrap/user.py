@@ -51,7 +51,7 @@ class User(object):
 
 
     def user_details(self):
-        value_map = {}  
+        value_map = {}
         for detail, attribute in details_map.items():
             value_map[detail] = detail_scrapper(self.soup, attribute)[0]
 
@@ -66,3 +66,18 @@ class User(object):
     def profile_details(self):
         attribute = {'class':'vcard-stat-count d-block'}
         self.followers, self.starred, self.following = detail_scrapper(self.soup, attribute)
+        self.organizations = _get_organizations()
+
+
+    def _get_organizations(self):
+        bar = self.soup.find_all(attrs={'class':'clearfix'})[0].find_all('a')
+        organizations = []
+        for i in bar:
+            org = i.get('aria-label')
+            organizations.append(org)
+        return organizations
+
+
+    def profile_pic(self):
+        link = self.soup.find_all('img', class_='avatar rounded-2')[0].get('src')
+        return link
