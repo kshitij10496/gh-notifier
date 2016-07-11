@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 base_url = 'https://github.com/search/'
 
+
 def kitchen(params):
     """Returns a BeautifulSoup prepared in the kitchen."""
     r = requests.get(base_url, params=params)
@@ -37,7 +38,7 @@ def user_search_filter(filterkey):
 
     """
     user_search_parameters = ('follow', 'repo', 'join')
-    measure_table = {'desc': ('most','high', 'large'), 'asc': ('least', 'less', 'few')}
+    measure_table = {'desc': ('most', 'high', 'large'), 'asc': ('least', 'less', 'few')}
     timeline_table = {'desc': ('recent', 'new'), 'asc': ('last', 'old')}
 
     search_params = {}
@@ -58,11 +59,11 @@ def user_search_filter(filterkey):
             search_params['o'] = 'asc'
 
         else:
-            search_params['o'] = 'desc' # the default behaviour returns "Most followers".
+            search_params['o'] = 'desc'  # the default behaviour returns "Most followers".
 
     else:
         raise ValueError("Enter a valid filterkey. Read the documentation "
-            "to know about the supported search parameters.")
+                         "to know about the supported search parameters.")
 
     return search_params
 
@@ -128,7 +129,7 @@ def search_page_users(p, params={}):
     return _search_page_users(soup, params)
 
 
-def _search_page_users(soup,params):
+def _search_page_users(soup, params):
     """Helper to search_page_users."""
     users = []
     user_list = soup.find_all('div', class_="user-list-info")

@@ -24,7 +24,7 @@ def user_kitchen(handle):
     return soup
 
 
-def detail_scrapper(soup, attribute) :
+def detail_scrapper(soup, attribute):
     """Function to scrape user and profile details from the soup."""
     tagset = soup.find_all(attrs=attribute)
     data = []
@@ -39,16 +39,18 @@ class User(object):
 
     Each user is identified by his unique GitHub handle.
     """
-    details_map = {'fullname': {'class':'vcard-fullname'}, 'bio' : {'class': 'user-profile-bio'},
-                   'company': {'aria-label':'Organization'}, 'location': {'aria-label':'Home location'},
-                   'email': {'aria-label':'Email'}, 'membership': {'aria-label':'Member since'}}
+    details_map = {'fullname': {'class': 'vcard-fullname'},
+                   'bio': {'class': 'user-profile-bio'},
+                   'company': {'aria-label': 'Organization'},
+                   'location': {'aria-label': 'Home location'},
+                   'email': {'aria-label': 'Email'},
+                   'membership': {'aria-label': 'Member since'}}
 
     def __init__(self, handle):
         self.handle = str(handle)
         self.soup = user_kitchen(handle)
         self.user_details()
         self.profile_details()
-
 
     def user_details(self):
         value_map = {}
@@ -62,21 +64,18 @@ class User(object):
         self.email = value_map['email']
         self.membership = value_map['membership']
 
-
     def profile_details(self):
-        attribute = {'class':'vcard-stat-count d-block'}
+        attribute = {'class': 'vcard-stat-count d-block'}
         self.followers, self.starred, self.following = detail_scrapper(self.soup, attribute)
         self.organizations = _get_organizations()
 
-
     def _get_organizations(self):
-        bar = self.soup.find_all(attrs={'class':'clearfix'})[0].find_all('a')
+        bar = self.soup.find_all(attrs={'class': 'clearfix'})[0].find_all('a')
         organizations = []
         for i in bar:
             org = i.get('aria-label')
             organizations.append(org)
         return organizations
-
 
     def profile_pic(self):
         link = self.soup.find_all('img', class_='avatar rounded-2')[0].get('src')
