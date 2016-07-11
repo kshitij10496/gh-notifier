@@ -116,7 +116,7 @@ def _search_location(soup, max_users, params):
         users.extend(search_page_users(i, params=params))
 
     if len(users) > max_users:
-        return users[:max_users]
+        users = users[:max_users]
 
     return users
 
