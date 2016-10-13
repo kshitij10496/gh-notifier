@@ -3,14 +3,7 @@ import sys
 from math import ceil
 import requests
 
-base_url = 'https://api.github.com/search/'
-
-
-def kitchen(params):
-    """Returns a Response prepared in the kitchen."""
-    r = requests.get(base_url, params=params)
-    data = r.text
-    return data
+base_url = 'https://api.github.com/search/users'
 
 
 def user_search_filter(filterkey):
@@ -114,3 +107,11 @@ def search_location(location, keyword=None, max_users=10, params={}):
         users.append(new_users)
     
     return users[:number_of_users]
+
+
+def _get_users(user_list):
+    users = []
+    for user in user_list:
+        users.append(user["login"])
+
+    return users
