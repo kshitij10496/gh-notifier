@@ -2,17 +2,15 @@ from __future__ import division
 import sys
 from math import ceil
 import requests
-from bs4 import BeautifulSoup
 
 base_url = 'https://api.github.com/search/'
 
 
 def kitchen(params):
-    """Returns a BeautifulSoup prepared in the kitchen."""
+    """Returns a Response prepared in the kitchen."""
     r = requests.get(base_url, params=params)
     data = r.text
-    soup = BeautifulSoup(data, 'lxml')
-    return soup
+    return data
 
 
 def user_search_filter(filterkey):
@@ -68,7 +66,7 @@ def user_search_filter(filterkey):
     return search_params
 
 
-def search_location(location, keyword=None, max_users=50, params={}):
+def search_location(location, keyword=None, max_users=10, params={}):
     """Location based search.
 
     Parameters
@@ -97,64 +95,22 @@ def search_location(location, keyword=None, max_users=50, params={}):
 
     """
     params['q'] = 'location:' + location
+    params['per_page'] = 100
     if keyword is not None:
         new_params = user_search_filter(keyword)
         params.update(new_params)
 
-    soup = kitchen(params)
-    return _search_location(soup, max_users, params)
-
-
-def _search_location(soup, max_users, params):
-    """Helper to search_location."""
-    number_of_users = int(soup.find_all('h3')[1].text.split()[2])
-    max_pages = ceil(max_users / 10) + 1
-    search_pages = ceil(number_of_users / 10) + 1
-    number_of_pages = int(min(max_pages, search_pages))
-
-    users = []
-    for i in range(1, number_of_pages):
-        users.extend(search_page_users(i, params=params))
-
-    if len(users) > max_users:
-        users = users[:max_users]
-
-    return users
-
-
-def search_page_users(p, params={}):
-    """Returns a list of handles on a search result page."""
-    params['p'] = str(p)
-    soup = kitchen(params)
-    return _search_page_users(soup, params)
-
-
-def _search_page_users(soup, params):
-    """Helper to search_page_users."""
-    users = []
-    user_list = soup.find_all('div', class_="user-list-info")
-    for user in user_list:
-        users.append(user.find('a').text)
-
-    return users
-
-
-def main():
-    location = str(sys.argv[1])
-    filename = str(sys.argv[2])
-
-    if len(sys.argv) > 3:
-        max_users = int(sys.argv[3])
-        users = search_location(location, max_users=max_users)
-    else:
-        users = search_location(location)
-
-    f = open(filename, 'w')
-    for user in users:
-        f.write(user + '\n')
-
-    f.close()
-
-
-if __name__ == '__main__':
-    main()
+    response = requests.get(base_url, params=params)
+    content = response.json()
+    total_users = content['total_count']
+    number_of_users = min(max_users, total_users)
+    number_of_pages = ceil(number_of_users / 100)
+    
+    users = _get_users(response.json()['items'])
+    for i in range(2, number_of_pages):
+        params['page'] = i
+        r = requests.get(base_url, params=params)
+        new_users = _get_users(r.json()['items'])
+        users.append(new_users)
+    
+    return users[:number_of_users]
