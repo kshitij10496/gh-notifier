@@ -4,7 +4,7 @@ from math import ceil
 import requests
 from bs4 import BeautifulSoup
 
-base_url = 'https://github.com/search/'
+base_url = 'https://api.github.com/search/'
 
 
 def kitchen(params):
