@@ -97,7 +97,7 @@ def search_location(location, keyword=None, max_users=10, params={}):
     content = response.json()
     total_users = content['total_count']
     number_of_users = min(max_users, total_users)
-    number_of_pages = ceil(number_of_users / 100)
+    number_of_pages = int(number_of_users / 100)
     
     users = _get_users(response.json()['items'])
     for i in range(2, number_of_pages):
