@@ -27,6 +27,8 @@ def notify(message):
         status = subprocess.run(["which", "terminal-notifier"]).returncode
         if status == 0:
             notifier = "terminal-notifier"
+            subprocess.run([notifier, "-title", "GitHub Notification", "-message",
+                            message, "-timeout", "10"])
 
         else:
             print("Kindly install terminal-notifier for MacOS.")
@@ -34,12 +36,11 @@ def notify(message):
 
     elif platform == 'linux':
         notifier = "notify-send"
+        subprocess.run([notifier, "GitHub Notification", message])
 
     # look into other cases
     else:
         print("Your system is not supported yet.")
         return -1
 
-    subprocess.run([notifier, "-title", "GitHub Notification", "-message",
-                    message, "-timeout", 10])
     return 1
