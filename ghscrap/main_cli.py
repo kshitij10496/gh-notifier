@@ -1,8 +1,7 @@
-from notifier import user_followers, user_repos
+from handler import main_handler
 
 def main():
-    user_followers()
-    user_repos()
-
+    main_handler()
+    
 if __name__ == "__main__":
     main()
