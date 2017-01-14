@@ -4,7 +4,7 @@ import getpass
 
 from github import Github
 
-from notifier import notify, generate_message
+from .notifier import notify, generate_message
 
 USER_CREDENTIALS = os.path.expanduser('~') + '/.ghnotifier_config'
 USER_DATA = os.path.expanduser('~') + '/.ghnotifier_data'
