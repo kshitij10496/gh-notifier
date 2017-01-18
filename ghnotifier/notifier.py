@@ -1,16 +1,6 @@
-import sys
 import subprocess
 
-
-def generate_message(protagonist, context, status):
-    if status == 1:
-        return "{} {}ed {}".format(protagonist, *context)
-    elif status == 0:
-        return "{} users {}ed {}".format(protagonist, *context)
-    elif status == -1:
-        return "{} users un{}ed {}".format(protagonist, *context)
-    else:
-        print("Enter valid status code for generating message")
+from settings import PLATFORM
 
 
 def notify(message):
@@ -21,8 +11,7 @@ def notify(message):
 
     """
     title = "GitHub Notification"
-    platform = sys.platform
-    if platform == 'darwin':
+    if PLATFORM == 'darwin':
         # test if terminal-notifier is present on the system or not
         status = subprocess.run(["which", "terminal-notifier"]).returncode
         if status == 0:
@@ -34,7 +23,7 @@ def notify(message):
             print("Kindly install terminal-notifier for MacOS.")
             return -1
 
-    elif platform == 'linux':
+    elif PLATFORM == 'linux':
         notifier = "notify-send"
         subprocess.run([notifier, "GitHub Notification", message])
 
