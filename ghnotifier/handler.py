@@ -1,4 +1,3 @@
-import os
 import json
 import getpass
 
@@ -6,12 +5,8 @@ from github import Github
 
 from .notifier import notify, generate_message
 
-USER_CREDENTIALS = os.path.expanduser('~') + '/.ghnotifier_config'
-USER_DATA = os.path.expanduser('~') + '/.ghnotifier_data'
-
 def create_user():
-
-    # read/create a configuration file for user credentials
+    """Read/create a configuration file for user credentials"""
     try:
         with open(USER_CREDENTIALS, 'r') as f:
             credentials = json.load(f)
@@ -20,19 +15,15 @@ def create_user():
         with open(USER_CREDENTIALS, 'w') as f:
             USERNAME = input("Enter your GitHub username: ")
             PASSWORD = getpass.getpass(prompt="Enter your password: ")
-            # store the credentials
+            # store the credentials locally
             credentials = {
                     "USERNAME": USERNAME,
                     "PASSWORD": PASSWORD 
                     }
             json.dump(credentials, f)
 
-    # create a data file if it does not already exist.
-    try:
-        with open(USER_DATA, 'r') as fp:
-            pass
-
-    except FileNotFoundError:
+    # create the USER_DATA file if it does not already exist.
+    if not os.path.isfile(USER_DATA):
         with open(USER_DATA, 'w') as fp:
             # Schema for user data
             data = {
