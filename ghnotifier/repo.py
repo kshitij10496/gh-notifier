@@ -1,7 +1,10 @@
+from helper import get_forks, get_watchers, get_stars, get_owner_name
+
 class Repo(object):
 
     def __init__(self, name, owner, forks, watchers, stars, url):
-        """
+        """ Represents a repository object returned by GitHub API v3.
+
         Parameters
         ==========
         name: str
@@ -21,6 +24,7 @@ class Repo(object):
 
         url: str
             API URL of the repository
+
         """
         self.name = name
         self.owner = owner
@@ -35,9 +39,9 @@ class Repo(object):
 
     @classmethod
     def from_name(cls, name):
-        owner_name = get_user()
+        owner_name = get_owner_name(name)
         owner = User(owner_name)
-        forks = get_forks()
-        watchers = get_watchers()
-        stars = get_stars()
+        forks = get_forks(owner)
+        watchers = get_watchers(owner)
+        stars = get_stars(owner)
         return cls(name, owner, forks, watchers, stars)

@@ -17,6 +17,13 @@ class Notification(object):
 
     """
     def __init__(self, message):
+        """
+        Parameters
+        ==========
+        message: str
+            The notification message
+
+        """
         self.message = message
         self.target = message.split()[-1]
         self.protagonist = message.split()[0]
@@ -24,6 +31,19 @@ class Notification(object):
 
     @classmethod
     def generate_message(cls, target, protagonist, context):
+        """
+        Parameters
+        ==========
+        target: str
+            The target user for the notification
+
+        protagonist: str
+            The protagonist of the notification
+
+        context: str
+            The context of the notification
+        
+        """
         message = "{} {}ed {}".format(protagonist, context, target)
         return cls(message)
 
@@ -32,3 +52,7 @@ class Notification(object):
 
     def __str__(self):
         return self.message
+
+    ## TODO: Add method to return the status of notification
+    ## TODO: Log the notifications
+
