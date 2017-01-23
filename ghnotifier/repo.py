@@ -53,7 +53,7 @@ class Repo(object):
         return cls.from_Repository(repo)
 
     @classmethod
-    def from_Repository(repo):
+    def from_Repository(cls, repo):
         name = repo['name']
         owner = User(repo['owner']['login'])
         forks = repo['forks_count']
@@ -61,5 +61,37 @@ class Repo(object):
         stars = repo['stargazers_count']
         return cls(name, owner, forks, watchers, stars)
 
-    def get_notifications():
-        pass
+    def get_notifications(self):
+        old_stars, old_watchers, old_forks # get from DB
+        new_stars, new_watchers, new_forks = self.stars, self.watchers, self.forks
+
+        delta_stars = new_stars - old_stars
+        delta_watchers = new_watchers - old_watchers
+        delta_forks = new_forks - old_forks
+
+        notifications = []
+        if delta_stars != 0:
+            context = 'starr'
+            if delta_stars < 0:
+                context = 'un' + context # not a typo
+
+            notifications.append(Notification.generate_message(self.name, context,
+                '{} users'.format(delta_stars)))
+
+        if delta_watchers != 0:
+            context = 'watch'
+            if delta_watchers < 0:
+                context = 'un' + context
+
+            notifications.append(Notification.generate_message(self.name, context,
+                '{} users'.format(delta_watchers)))
+
+        if delta_forks != 0:
+            context = 'fork'
+            if delta_forks < 0:
+                context = 'un' + context
+
+            notifications.append(Notification.generate_message(self.name, context,
+                '{} users'.format(delta_watchers)))
+
+        return notifications

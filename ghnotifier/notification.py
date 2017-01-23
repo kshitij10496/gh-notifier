@@ -26,7 +26,7 @@ class Notification(object):
         """
         self.message = message
         self.target = message.split()[-1]
-        self.protagonist = message.split()[0]
+        self.protagonist = message.split()[:-2]
         self.context = message.split()[-2][:-2]
 
     @classmethod
