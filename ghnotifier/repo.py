@@ -2,7 +2,7 @@ from helper import get_forks, get_watchers, get_stars, get_owner_name
 
 class Repo(object):
 
-    def __init__(self, name, owner, forks, watchers, stars, url):
+    def __init__(self, name, owner, forks, watchers, stars):
         """ Represents a repository object returned by GitHub API v3.
 
         Parameters
@@ -31,17 +31,35 @@ class Repo(object):
         self.forks = forks
         self.watchers = watchers
         self.stars = stars
-        self.url = url
+        self.url = 'https://github.com/' + owner + '/' + name
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.name, self.owner,
-                               self.forks, self.watchers, self.stars)
+        return '{}({}, {}, {}, {}, {})'.format(self.__class__.__name__,
+                                               self.name, self.owner, self.forks,
+                                               self.watchers, self.stars)
 
     @classmethod
-    def from_name(cls, name):
-        owner_name = get_owner_name(name)
-        owner = User(owner_name)
-        forks = get_forks(owner)
-        watchers = get_watchers(owner)
-        stars = get_stars(owner)
+    def from_name(cls, repo_name, owner_name):
+        url = URL + '/repos/' + owner_name + repo_name
+        repo = requests.get(url, headers=HEADERS, auth=(USERNAME, PASSWORD)).json()
+        # handle pagination
+
+        #owner = owner_name
+        #name = repo_name
+        #forks = repo['forks_count']
+        #watchers = repo['watchers_count']
+        #stars = repo['stargazers_count']
+        #return cls(name, owner, forks, watchers, stars)
+        return cls.from_Repository(repo)
+
+    @classmethod
+    def from_Repository(repo):
+        name = repo['name']
+        owner = User(repo['owner']['login'])
+        forks = repo['forks_count']
+        watchers = repo['watchers_count']
+        stars = repo['stargazers_count']
         return cls(name, owner, forks, watchers, stars)
+
+    def get_notifications():
+        pass
