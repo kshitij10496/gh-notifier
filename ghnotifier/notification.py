@@ -1,3 +1,7 @@
+import subprocess
+
+from settings import NOTIFIER
+
 class Notification(object):
     """ Base class for all notifications.
     Every notification is of the form: "<protagonist> <context> <target>"
@@ -24,6 +28,7 @@ class Notification(object):
             The notification message
 
         """
+        self.title = 'GitHub Notification'
         self.message = message
         self.target = message.split()[-1]
         self.protagonist = message.split()[:-2]
@@ -53,6 +58,22 @@ class Notification(object):
     def __str__(self):
         return self.message
 
-    ## TODO: Add method to return the status of notification
-    ## TODO: Log the notifications
+    def notify(self):
+        """ Notifies the logged in user with an update message using the notifer application based on the Operating System.
 
+        For MacOS : terminal-notifier
+            Linux : notify-send
+
+        """
+        if NOTIFIER == "terminal-notifier"
+            subprocess.run([notifier, "-title", self.title, "-message",
+                                self.message, "-timeout", "10"])
+
+        elif NOTIFIER == 'notify-send':
+            subprocess.run([notifier, self.title, self.message])
+
+        else:
+            return -1
+
+        return 1
+    ## TODO: Log the notifications
