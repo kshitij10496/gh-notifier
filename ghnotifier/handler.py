@@ -1,131 +1,69 @@
-import json
+import os
 import getpass
+import json
 
-from github import Github
+from userclass import User
+from repo import Repo
+from notification import Notification
+from settings import USER_CREDENTIALS, USER_DATA, USERNAME, NOTIFIER
 
-from .notifier import notify, generate_message
+def dump_user_data(user):
+    """ Function to store the User object in a JSON file.
 
-def create_user():
-    """Read/create a configuration file for user credentials"""
-    try:
-        with open(USER_CREDENTIALS, 'r') as f:
-            credentials = json.load(f)
-
-    except FileNotFoundError:
-        with open(USER_CREDENTIALS, 'w') as f:
-            USERNAME = input("Enter your GitHub username: ")
-            PASSWORD = getpass.getpass(prompt="Enter your password: ")
-            # store the credentials locally
-            credentials = {
-                    "USERNAME": USERNAME,
-                    "PASSWORD": PASSWORD 
-                    }
-            json.dump(credentials, f)
-
+    Parameters
+    ==========
+    user: User
+        The object to be stored. 
+    
+    """
     # create the USER_DATA file if it does not already exist.
-    if not os.path.isfile(USER_DATA):
-        with open(USER_DATA, 'w') as fp:
-            # Schema for user data
-            data = {
-                    credentials["USERNAME"]:
-                        {
-                            "followers": 0,
-                            "repos": []
-                        }
-                    }
-            json.dump(data, fp)
+    with open(USER_DATA, 'w') as f:
+        json.dump(user.toJSON(), f)
 
-    g = Github(credentials["USERNAME"], credentials["PASSWORD"])
-    user = g.get_user()
-    return user
+def load_user_data(user):
+    with open(USER_DATA, 'r') as f:
+        data = json.loads(json.load(f))
+        if data['username'] == user.username:
+            userdata = data
+        else:
+            print('Wrong input') 
+
+    return userdata
 
 def main_handler():
-    user = create_user()
-    # get user_data
-    with open(USER_DATA, 'r') as fp:
-        user_data = json.load(fp)[user.login]
-
-    followers_status = handle_followers(user_data["followers"], user)
-    user_data["followers"] = user.followers
-    print("Execution of handle_followers is over.")
-    print("Execution of handling repos is commencing.")
-    for repo in user.get_repos():
-        print("Handling repo: %s", repo.name)
-        for i, old_repo in enumerate(user_data["repos"]):
-            if repo.name in old_repo:
-                updated_repo = handle_repo(old_repo, repo)
-                user_data["repos"][i] = updated_repo
-                break           
-        else:
-            new_repo = {
-                        "name": repo.name,
-                        "forks": 0,
-                        "stars": 0,
-                        "watchers": 0
-                        }
-        
-            updated_repo = handle_repo(new_repo, repo)
-            user_data["repos"].append(updated_repo) 
-        print("Handling %s over", repo.name)
-
-    print("Writing data")
-    with open(USER_DATA, 'w') as fp:
-        json.dump(user_data, fp)
-
-
-def logic(current_data, previous_data, context=None):
-    delta = current_data - previous_data
-    if delta == 0:
-        return 0
-
-    elif delta > 0:
-        message = generate_message(delta, context, 1)
-
+    newuser = User.from_handle(USERNAME) # New User Data
+    
+    if os.path.isfile(USER_DATA):
+        userdata = load_user_data(newuser) # Old user data
+    
     else:
-        message = generate_message(delta, context, -1)
+        userdata = json.loads(User(USERNAME).toJSON())
 
-    notify(message)
-    return 1
+    # get followers notification
+    old_followers = userdata['followers']
+    notifications = newuser.get_notifications(old_followers)
+    
+    # get repo notifications
+    newrepos = newuser.repos
+    oldrepos = userdata['repos']
+    for newrepo in newrepos:
+        if oldrepos is None:
+            oldstars, oldwatchers, oldforks = 0, 0, 0
+        else:
+            for oldrepo in oldrepos:
+                if newrepo.name == oldrepo['name']:
+                    oldstars, oldwatchers, oldforks = oldrepo['stars'], oldrepo['watchers'], oldrepo['forks']
+                    break
+            else:
+                oldstars, oldwatchers, oldforks = 0, 0, 0
 
-# handle user's followers updates
-def handle_followers(user_followers, user):
-    previous_followers = user_followers
-    user_followers = current_followers = user.followers
-    context = ("follow", user.login)
+        repo_notifications = newrepo.get_notifications(oldstars, oldwatchers, oldforks)
+        # print("Repo: " + str(newrepo))
 
-    followers_handle = []
-    number_of_new_followers = current_followers - previous_followers
-    if(number_of_new_followers == 0): # no change in following
-        return 0
+        notifications += repo_notifications
+    
+    for notification in notifications:
+        #print(notification.message)
+        notification.notify()
 
-    elif(number_of_new_followers > 0): # new followers
-        for follower in user.get_followers()[previous_followers:]:
-            followers_handle.append(follower.login)
-
-        for f in followers_handle:
-            message = generate_message(f, context, 1)
-            notify(message)
-
-        return 1
-
-    else: # people unfollowed
-        message = generate_message(number_of_new_followers, context, -1)
-        notify(message)
-        return -1
-
-# handle user's repo updates
-def handle_repo(user_repo, repo):
-        previous_forks = user_repo["forks"]
-        previous_stars = user_repo["stars"]
-        previous_watchers = user_repo["watchers"]
-       
-        user_repo["forks"] = current_forks = repo.forks_count
-        user_repo["stars"] = current_stars = repo.stargazers_count
-        user_repo["watchers"] = current_watchers = repo.watchers_count
-
-        name = repo.name
-        logic(current_stars, previous_stars, context=("starr", name)) # past tense
-        logic(current_watchers, previous_watchers, context=("watch", name))
-        logic(current_forks, previous_forks, context=("fork", name))
-
-        return user_repo
+    dump_user_data(newuser)

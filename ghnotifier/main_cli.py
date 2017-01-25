@@ -1,4 +1,4 @@
-from .handler import main_handler
+from handler import main_handler
 
 def main():
     main_handler()
