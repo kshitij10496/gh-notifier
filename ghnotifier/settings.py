@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import json
+import getpass
 
 USER_CREDENTIALS = os.path.expanduser('~') + '/.ghnotifier_config.json'
 USER_DATA = os.path.expanduser('~') + '/.ghnotifier_data.json'
