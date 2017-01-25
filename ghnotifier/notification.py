@@ -35,7 +35,7 @@ class Notification(object):
         self.context = message.split()[-2][:-2]
 
     @classmethod
-    def generate_message(cls, target, protagonist, context):
+    def generate_message(cls, protagonist, context, target):
         """
         Parameters
         ==========
@@ -58,6 +58,7 @@ class Notification(object):
     def __str__(self):
         return self.message
 
+
     def notify(self):
         """ Notifies the logged in user with an update message using the notifer application based on the Operating System.
 
@@ -65,12 +66,12 @@ class Notification(object):
             Linux : notify-send
 
         """
-        if NOTIFIER == "terminal-notifier"
-            subprocess.run([notifier, "-title", self.title, "-message",
+        if NOTIFIER == "terminal-notifier":
+            subprocess.run([NOTIFIER, "-title", self.title, "-message",
                                 self.message, "-timeout", "10"])
 
         elif NOTIFIER == 'notify-send':
-            subprocess.run([notifier, self.title, self.message])
+            subprocess.run([NOTIFIER, self.title, self.message])
 
         else:
             return -1
