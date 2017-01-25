@@ -71,7 +71,7 @@ class Notification(object):
                                 self.message, "-timeout", "10"])
 
         elif NOTIFIER == 'notify-send':
-            subprocess.run([NOTIFIER, self.title, self.message])
+            subprocess.run('{} "{}" "{}"'.format(NOTIFIER, self.title, self.message), shell=True)
 
         else:
             return -1
