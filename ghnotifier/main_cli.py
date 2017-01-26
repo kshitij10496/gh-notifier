@@ -1,13 +1,7 @@
-import schedule
-import time
-
-from handler import job
+from handler import main_handler
 
 def main():
-    schedule.every(5).minutes.do(job)
-
-    while True:
-        schedule.run_pending()
+	main_handler()
 
 if __name__ == "__main__":
     main()
