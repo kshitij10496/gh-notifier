@@ -66,3 +66,6 @@ def main_handler():
         notification.notify()
 
     dump_user_data(newuser)
+
+def job():
+    main_handler()
