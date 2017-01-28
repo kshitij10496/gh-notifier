@@ -44,7 +44,7 @@ class Repo(object):
     @classmethod
     def from_name(cls, repo_name, owner_name):
         url = URL + '/repos/' + owner_name + "/" + repo_name
-        print("Repo = " + repo_name + ' : ' + url)
+        # print("Repo = " + repo_name + ' : ' + url)
         repo = requests.get(url, headers=HEADERS, auth=(USERNAME, PASSWORD)).json()
         # handle pagination
 

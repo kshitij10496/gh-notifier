@@ -75,13 +75,13 @@ class User(object):
                         params['page'] = i
                         new_page = s.get(notification_url, headers=HEADERS,
                                          params=params, auth=(USERNAME, PASSWORD)).json()
-                        print("Length of page {} : {}".format(i, len(new_page)))
+                        #print("Length of page {} : {}".format(i, len(new_page)))
                         followers += new_page
 
                 start_index = old_count % 100
                 context = "follow"
-                print("Len of followers:" + str(len(followers)))
-                print("Len of list:" + str(len(followers[start_index:])))
+                #print("Len of followers:" + str(len(followers)))
+                #print("Len of list:" + str(len(followers[start_index:])))
                 for user_blob in followers[start_index:]:
                     protagonist = user_blob['login']
                     notifications += [Notification.generate_message(protagonist, context, target)]
@@ -102,7 +102,7 @@ def get_blob(handle):
     else:
         user_url = URL + '/users/' + handle
 
-    print("User = " + USERNAME + " : " + user_url)
+    # print("User = " + USERNAME + " : " + user_url)
     user = requests.get(user_url, headers=HEADERS, auth=(USERNAME, PASSWORD)).json()
     return user
 
