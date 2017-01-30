@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
     name = 'gh-notifier',
 
-    version = '0.0.1',
+    version = '0.1.0',
 
     description = "A Desktop notifier for all your social GitHub notifications",
 
@@ -17,7 +17,7 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools :: GitHub',
+        'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
     ],
@@ -26,7 +26,7 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
-    install_requires=['requests', 'PyGitHub', 'bs4'],
+    install_requires=['requests'],
 
     entry_points={
         'console_scripts': [
